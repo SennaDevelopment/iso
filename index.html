@@ -1,0 +1,145 @@
+<html><head> 
+    <title>Calculator Toleranties ISO Passingstelsel</title>
+
+    <meta http-equiv="content-style-type" content="text/css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+    <meta http-equiv="imagetoolbar" content="no">
+    <meta name="robots" content="index, follow">
+    <meta name="author" lang="nl" content="Senna">
+    <meta name="copyright" lang="nl" content="Copyright ©Senna 2024">
+    <link rel="start" href="/index.html">
+
+    <style type="text/css">
+      *      { font-family: Calibri, sans-serif; }
+      TABLE  { border-collapse: collapse; border-style: none; border-width: 0px; font-size: large ; width: 95vw; max-width: 800px; }
+      TD     { border-collapse: collapse; border-style: solid; border-width: 0px; border-color: grey; text-align: center; vertical-align: center; padding: 5px; } 
+      TD.in  { background-color: lime; }
+      SELECT { font-size: inherit; }
+      INPUT  { font-size: inherit; }
+    </style>
+   <script>                                                                                                                                                                                   function aktiveren() { 
+     document.getElementById("nominal").focus(); 
+     document.getElementById("nominal").select(); 
+   } 
+   function KeyPressedIsNumeric(evt) { 
+     var charCode = (evt.which) ? evt.which : evt.keyCode;
+     //document.getElementById("comment").innerHTML = charCode; 
+     return ([9999, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 8, 9, 35, 36, 37, 39, 46].indexOf(charCode) > 0); 
+   } 
+   function inputok(ok) { 
+     var x = document.getElementsByClassName("in"); var i;
+     var newcolor = (ok) ? 'lime' : 'red';
+     for (i = 0; i < x.length; i++) {
+       x[i].style.backgroundColor = newcolor;
+     } 
+   } 
+   function actualiseren(elem) { 
+     var elem1 = document.getElementById('hole'); 
+     var elem2 = document.getElementById('nominal'); 
+     var elem3 = document.getElementById('bg'); 
+     var elem4 = document.getElementById('tk'); 
+
+     if (elem.name == 'ty') { 
+       index_bg = elem3.selectedIndex;
+       if (elem.value == 'gat') { 
+         var gm = new Array("A", "B", "C", "CD", "D", "E", "EF", "F", "FG", "G", "H", "js", "j", "K", "M", "N", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z", "ZA", "ZB", "ZC"); 
+       } else { 
+         var gm = new Array("a", "b", "c", "cd", "d", "e", "ef", "f", "fg", "g", "h", "js", "j", "k", "m", "n", "p", "q", "r", "s", "t", "u", "v", "x", "y", "z", "za", "zb", "zc"); 
+       } 
+       elem3.options.length = 0; 
+       for (i=0; i<29; i++) { elem3.options[i] = new Option(gm[i], gm[i], false, false); } 
+       elem3.selectedIndex = index_bg;
+     } 
+     document.getElementById('out1').innerHTML = elem2.value + '&nbsp;' + elem3.value + '&nbsp;' + elem4.value; 
+     document.getElementById('out2').innerHTML = elem2.value;
+   } 
+   function showData(str) { 
+     var parameters = '';
+     parameters += 'ty=';
+     parameters += (document.getElementById('hole').checked) ? ('gat') : ('as'); 
+     parameters += "&";
+     parameters += 'nm=' + document.getElementById('nominal').value + "&"; 
+     parameters += 'bg=' + document.getElementById("bg").value + "&"; 
+     parameters += 'tk=' + document.getElementById("tk").value; 
+     //alert(parameters);
+     
+     var xmlhttp = new XMLHttpRequest();
+     var url = "passing.php"; 
+     xmlhttp.open("POST", url, true); 
+
+     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+     xmlhttp.setRequestHeader("Content-length", parameters.length);
+     xmlhttp.setRequestHeader("Connection", "close");
+
+     xmlhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+         var respons = xmlhttp.responseText; 
+         //document.getElementById("dump").innerHTML = respons; 
+         document.getElementById("comment").innerHTML = (respons.indexOf('?') !== -1) ? ("invoer ongeldig, of buiten bereik") : (''); 
+         inputok(respons.indexOf('?') == -1);
+         var values = respons.split('|');  // nominalemaat basisgrensmaat tolerantieklasse boven  grootstegrensmaat onder kleinstegrensmaat
+         document.getElementById("boven").innerHTML = values[3]; 
+         document.getElementById("onder").innerHTML = values[5]; 
+         document.getElementById("kleinstegrensmaat").innerHTML = values[6]; 
+         document.getElementById("grootstegrensmaat").innerHTML = values[4]; 
+       }
+     }
+     xmlhttp.send(parameters);
+   }
+   function showDisclaimer(show) { 
+     document.getElementById("disclaimer").style.visibility = (show) ? "visible" : "hidden" ;
+   }
+      
+    </script>
+  </head> 
+
+  <body onload="pagerank('isoapp', null); aktiveren(); actualiseren(document.getElementById('binnen')); ">
+  <input id="status" hidden="">
+    
+    <table>
+        <tbody><tr><td style="font-size: xx-large; text-align: left; " colspan="2">ISO Passingstelsel app</td><td style="text-align: right; " colspan="7"><a href="iso-passingstelsel-appp.html" tabindex="-1">voorkeurpassingen</a>&nbsp;|&nbsp;<a href="iso-passingstelsel.html#uitleg" tabindex="-1">introductie</a></td><td></td></tr>
+        <tr><td class="in">kies een tolerantie</td><td>&nbsp;</td><td colspan="3" style="background-color: cyan; ">&nbsp;</td><td style="font-size: medium; background-color: cyan; "><div id="boven">17</div></td><td style="font-size: medium; background-color: cyan; ">μm</td><td style="background-color: cyan; ">&nbsp;</td><td style="background-color: cyan; "><div id="grootstegrensmaat">12.017</div></td><td>&nbsp;</td></tr>
+        <tr>
+          <td class="in">
+            <input name="ty" type="radio" value="gat" id="hole" checked="" onchange="actualiseren(this); showData(); ">GAT
+            <input name="ty" type="radio" value="as" id="shaft" onchange="actualiseren(this); showData(); ">as 
+            <input name="nm" type="text" min="1" max="500" step="1" size="4" maxlength="3" id="nominal" onkeypress="return KeyPressedIsNumeric(event); " onkeyup="actualiseren(this); showData(); " value="12">
+            <select name="bg" id="bg" onchange="actualiseren(this); showData(); "><option>A</option><option>B</option><option>C</option><option>CD</option><option>D</option><option>E</option><option>EF</option><option>F</option><option>FG</option><option selected="">G</option><option>H</option><option>j</option><option>js</option><option>K</option><option>M</option><option>N</option><option>P</option><option>R</option><option>S</option><option>T</option><option>U</option><option>V</option><option>X</option><option>Y</option><option>Z</option><option>ZA</option><option>ZB</option><option>ZC</option></select> 
+            <select name="tk" id="tk" onchange="actualiseren(this); showData(); "><option>01</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option selected="">7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option></select><br> 
+          </td>
+          <td style="font-size: xx-large; ">&nbsp;→&nbsp;</td>
+          <td style="background-color: cyan; "><div id="out1">12&nbsp;G&nbsp;7</div></td><td style="background-color: cyan; ">=</td><td style="background-color: cyan; "><div id="out2">12</div></td><td colspan="2" style="background-color: cyan; ">&nbsp;</td><td style="background-color: cyan; ">=</td><td style="background-color: cyan; ">&nbsp;</td><td>&nbsp;</td>
+        </tr> 
+        <tr><td style="font-size: small; " class="in"><div id="comment">&nbsp;</div></td><td>&nbsp;</td><td colspan="3" style="background-color: cyan; ">&nbsp;</td><td style="font-size: medium; background-color: cyan; "><div id="onder">6</div></td><td style="font-size: medium; background-color: cyan; ">μm</td><td style="background-color: cyan; ">&nbsp;</td><td style="background-color: cyan; "><div id="kleinstegrensmaat">12.006</div></td><td>&nbsp;</td></tr>
+    </tbody></table> 
+    &nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>
+    
+    <div id="dump"></div>
+    <p>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</p>
+    <!-- 
+    <TABLE STYLE="width: auto; ">
+      <TR><TD COLSPAN="5" STYLE="font-size: small; ">wat vind je van de nieuwe calculator:</TD><TD>&nbsp;</TD></TR>
+      <TR>
+        <TD><IMG SRC="/statistics/img/votedown.png" HEIGHT="20px" TITLE="don't like" onclick="pagerank('isoapp',0); "></TD>
+        <TD><DIV STYLE="font-size: small; " ID="dislikes">dislikes</DIV></TD>
+        <TD><IMG ID="redbar" SRC="/statistics/img/rood.png" WIDTH="50px" HEIGHT="3px"><IMG ID="greenbar" SRC="/statistics/img/groen.png" WIDTH="50px" HEIGHT="3px"></TD>
+        <TD><DIV STYLE="font-size: small; " ID="likes">likes</DIV></TD>
+        <TD><IMG SRC="/statistics/img/voteup.png" HEIGHT="20px" TITLE="like" onclick="pagerank('isoapp',1); "></TD>
+        <TD><DIV STYLE="font-size: small; " ID="feedback">feedback</DIV></TD>
+      </TR>
+    </TABLE>
+    -->
+    <p><span style="color: red; font-weight: bold; " onmouseover="showDisclaimer(true1); ">Disclaimer</span><br>
+    </p><div id="disclaimer" style="visibility: hidden;">
+      <p class="scherm"> 
+        Vrijwaring: aan deze gegevens kunnen geen rechten worden ontleend &amp; gebruik is op eigen risico
+      </p>
+      <p>
+        <a href="iso-passingstelsel.html" tabindex="-1">uitleg</a> over het ISO Passingstelsel en toleranties, en snelle opzoektabellen.<br> 
+        &nbsp;<br> 
+        <a href="http://www.nadro.nl/reageer.html" tabindex="-1">reageren</a> op deze pagina<br> 
+        &nbsp;<br> 
+        bekijk de <a href="http://www.nadro.nl/statistics/pagestatistics.php?webpage=tolapp" tabindex="-1">bezoeker statistieken</a> van deze pagina<br> 
+      </p> 
+    </div>
+</body></html>
